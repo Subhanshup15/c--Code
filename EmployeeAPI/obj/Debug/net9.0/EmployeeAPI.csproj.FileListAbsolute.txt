@@ -30,3 +30,4 @@ C:\Users\spard\Documents\GitHub\web\c#\c--Code\EmployeeAPI\obj\Debug\net9.0\refi
 C:\Users\spard\Documents\GitHub\web\c#\c--Code\EmployeeAPI\obj\Debug\net9.0\EmployeeAPI.pdb
 C:\Users\spard\Documents\GitHub\web\c#\c--Code\EmployeeAPI\obj\Debug\net9.0\EmployeeAPI.genruntimeconfig.cache
 C:\Users\spard\Documents\GitHub\web\c#\c--Code\EmployeeAPI\obj\Debug\net9.0\ref\EmployeeAPI.dll
+C:\Users\spard\Documents\GitHub\web\c#\c--Code\EmployeeAPI\obj\Debug\net9.0\EmployeeAPI.sourcelink.json
