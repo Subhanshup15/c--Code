@@ -30,15 +30,15 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 1. Add MySQL database connection
+//1. Add MySQL database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(8, 0, 25))));
 
-// 🔹 2. Add Controllers
+//2. Add Controllers
 builder.Services.AddControllers();
 
-// 🔹 3. Enable CORS for React frontend
+//3. Enable CORS for React frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -50,11 +50,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// 🔹 4. Use CORS (must be before routing)
+//4. Use CORS (must be before routing)
 app.UseCors("AllowReactApp");
 
-// 🔹 5. Map Controllers (API endpoints)
+//5. Map Controllers (API endpoints)
 app.MapControllers();
 
-// 🔹 6. Run the application
+//6. Run the application
 app.Run();
