@@ -83,7 +83,7 @@ function App() {
   const [form, setForm] = useState({ id: 0, name: "", department: "", salary: "" });
   const [isEditing, setIsEditing] = useState(false);
 
-  // ✅ FETCH all employees
+  //  FETCH all employees
   useEffect(() => {
     fetchEmployees();
   }, []);
@@ -95,7 +95,7 @@ function App() {
       .catch((err) => console.error("Fetch error:", err));
   };
 
-  // ✅ HANDLE form submit (Add or Update)
+  //  HANDLE form submit (Add or Update)
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -134,13 +134,13 @@ function App() {
     }
   };
 
-  // ✅ Edit button click
+  //  Edit button click
   const handleEdit = (emp) => {
     setForm(emp);
     setIsEditing(true);
   };
 
-  // ✅ Delete button click
+  //  Delete button click
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       fetch(`${API_BASE}/api/emp/${id}`, { method: "DELETE" })
