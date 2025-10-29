@@ -34,8 +34,8 @@
 
 
 
-  /// crud opration fro static
-  /// 
+/// crud opration fro static
+/// 
 // using Microsoft.AspNetCore.Mvc;
 // using EmployeeAPI.Models;
 // using System.Collections.Generic;
@@ -96,6 +96,97 @@
 // }
 
 
+//without pagination 
+
+
+// using EmployeeAPI.Data;
+// using EmployeeAPI.Models;
+// using Microsoft.AspNetCore.Mvc;
+// using Microsoft.EntityFrameworkCore;
+
+// namespace EmployeeAPI.Controllers
+// {
+//     [Route("api/[controller]")]
+//     [ApiController]
+//     public class EmpController : ControllerBase
+//     {
+//         private readonly AppDbContext _context;
+
+//         public EmpController(AppDbContext context)
+//         {
+//             _context = context;
+//         }
+
+//         // GET api/emp
+//         [HttpGet]
+//         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
+//         {
+//             return await _context.Employees.ToListAsync();
+//         }
+
+
+
+
+
+
+//         // GET api/emp/5
+//         [HttpGet("{id}")]
+//         public async Task<ActionResult<Employee>> GetEmployee(int id)
+//         {
+//             var emp = await _context.Employees.FindAsync(id);
+//             if (emp == null)
+//                 return NotFound();
+
+//             return emp;
+//         }
+
+//         // POST api/emp
+//         [HttpPost]
+//         public async Task<ActionResult<Employee>> PostEmployee(Employee emp)
+//         {
+//             _context.Employees.Add(emp);
+//             await _context.SaveChangesAsync();
+//             return CreatedAtAction(nameof(GetEmployee), new { id = emp.Id }, emp);
+//         }
+
+//         // ✅ FIXED PUT api/emp/5
+//         [HttpPut("{id}")]
+//         public async Task<IActionResult> PutEmployee(int id, [FromBody] Employee emp)
+//         {
+//             var existingEmp = await _context.Employees.FindAsync(id);
+//             if (existingEmp == null)
+//                 return NotFound();
+
+//             // update only fields that changed
+//             existingEmp.Name = emp.Name;
+//             existingEmp.Department = emp.Department;
+//             existingEmp.Salary = emp.Salary;
+//             existingEmp.Details = emp.Details;
+
+//             await _context.SaveChangesAsync();
+
+//             return Ok(existingEmp);
+//         }
+
+//         // DELETE api/emp/5
+//         [HttpDelete("{id}")]
+//         public async Task<IActionResult> DeleteEmployee(int id)
+//         {
+//             var emp = await _context.Employees.FindAsync(id);
+//             if (emp == null)
+//                 return NotFound();
+
+//             _context.Employees.Remove(emp);
+//             await _context.SaveChangesAsync();
+
+//             return NoContent();
+//         }
+//     }
+// }
+
+/// with pagiantion 
+
+
 using EmployeeAPI.Data;
 using EmployeeAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -114,42 +205,116 @@ namespace EmployeeAPI.Controllers
             _context = context;
         }
 
-        // GET api/emp
+        // ✅ GET api/emp?page=1&pageSize=5 (Paginated)
+        // [HttpGet]
+        // public async Task<IActionResult> GetEmployees([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+        // {
+        //     if (page < 1) page = 1;
+        //     if (pageSize < 1) pageSize = 5;
+
+        //     var totalRecords = await _context.Employees.CountAsync();
+        //     var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        //     var employees = await _context.Employees
+        //         .OrderBy(e => e.Id)
+        //         .Skip((page - 1) * pageSize)
+        //         .Take(pageSize)
+        //         .ToListAsync();
+
+        //     return Ok(new
+        //     {
+        //         success = true,
+        //         message = "Employee data fetched successfully.",
+        //         pagination = new
+        //         {
+        //             currentPage = page,
+        //             pageSize,
+        //             totalRecords,
+        //             totalPages
+        //         },
+        //         data = employees
+        //     });
+        // }
+
+
+        // ✅ GET api/emp?page=1&pageSize=10&search=John
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
+        public async Task<IActionResult> GetEmployees(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = "")
         {
-            return await _context.Employees.ToListAsync();
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 5;
+
+            // ✅ Filter by search term (name or department)
+            var query = _context.Employees.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(e =>
+                    e.Name.ToLower().Contains(search) ||
+                    e.Department.ToLower().Contains(search));
+            }
+
+            var totalRecords = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            var employees = await query
+                .OrderBy(e => e.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Employee data fetched successfully.",
+                pagination = new
+                {
+                    currentPage = page,
+                    pageSize,
+                    totalRecords,
+                    totalPages
+                },
+                data = employees
+            });
         }
 
-        // GET api/emp/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        // ✅ GET api/emp/5 (Get by ID)
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetEmployeeById(int id)
         {
             var emp = await _context.Employees.FindAsync(id);
             if (emp == null)
-                return NotFound();
+                return NotFound(new { success = false, message = "Employee not found." });
 
-            return emp;
+            return Ok(new { success = true, data = emp });
         }
 
-        // POST api/emp
+        // ✅ POST api/emp (Create new employee)
         [HttpPost]
-        public async Task<ActionResult<Employee>> PostEmployee(Employee emp)
+        public async Task<IActionResult> CreateEmployee([FromBody] Employee emp)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, message = "Invalid employee data." });
+
             _context.Employees.Add(emp);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetEmployee), new { id = emp.Id }, emp);
+
+            return CreatedAtAction(nameof(GetEmployeeById), new { id = emp.Id },
+                new { success = true, message = "Employee created successfully.", data = emp });
         }
 
-        // ✅ FIXED PUT api/emp/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, [FromBody] Employee emp)
+        // ✅ PUT api/emp/5 (Update employee)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Employee emp)
         {
             var existingEmp = await _context.Employees.FindAsync(id);
             if (existingEmp == null)
-                return NotFound();
+                return NotFound(new { success = false, message = "Employee not found." });
 
-            // update only fields that changed
             existingEmp.Name = emp.Name;
             existingEmp.Department = emp.Department;
             existingEmp.Salary = emp.Salary;
@@ -157,22 +322,21 @@ namespace EmployeeAPI.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(existingEmp);
+            return Ok(new { success = true, message = "Employee updated successfully.", data = existingEmp });
         }
 
-        // DELETE api/emp/5
-        [HttpDelete("{id}")]
+        // ✅ DELETE api/emp/5 (Delete employee)
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             var emp = await _context.Employees.FindAsync(id);
             if (emp == null)
-                return NotFound();
+                return NotFound(new { success = false, message = "Employee not found." });
 
             _context.Employees.Remove(emp);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { success = true, message = "Employee deleted successfully." });
         }
     }
 }
-

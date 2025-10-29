@@ -32,14 +32,14 @@ namespace EmployeeAPI.Migrations
                     b.Property<string>("Department")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Details")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(65,30)");
-
-                    b.Property<string>("details")
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

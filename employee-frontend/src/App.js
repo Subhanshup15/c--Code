@@ -3,7 +3,7 @@ import EmployeeManager from "./components/EmployeeManager";
 
 function App() {
   return (
-    <div>
+       <div className="App">
       <EmployeeManager />
     </div>
   );

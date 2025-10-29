@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "RAOAF9Diw6Q=",
+  "dgSpecHash": "IbgM9cLaZSc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\spard\\Documents\\GitHub\\web\\c#\\c--Code\\EmployeeAPI\\EmployeeAPI.csproj",
+  "projectFilePath": "C:\\Users\\spard\\Documents\\GitHub\\web\\csharp\\c--Code\\EmployeeAPI\\EmployeeAPI.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\spard\\.nuget\\packages\\bogus\\35.6.5\\bogus.35.6.5.nupkg.sha512",
     "C:\\Users\\spard\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\spard\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.10\\microsoft.aspnetcore.openapi.9.0.10.nupkg.sha512",
     "C:\\Users\\spard\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
